@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="เกม Davinci Code เล่นคนเดียวกับ AI - ฝึกทักษะการอนุมานและวิทยาการคำนวณผ่านเกมการ์ด">
+  <title>Davinci Code — Solo vs AI</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <!-- ═══ Starfield Background ═══ -->
+  <div id="starfield"></div>
+
+  <!-- ═══ Global Settings Button (always visible) ═══ -->
+  <button id="global-settings-btn" class="btn btn-icon btn-settings-gear" aria-label="Settings">
+    <i data-lucide="settings"></i>
+  </button>
+
+  <!-- ═══ Global Settings Modal ═══ -->
+  <div id="settings-modal" class="modal-overlay">
+    <div class="modal">
+      <h2 class="modal-title"><i data-lucide="settings" class="icon-inline"></i> การตั้งค่าทั่วไป</h2>
+
+      <div class="setting-row">
+        <div class="setting-label">
+          <i data-lucide="volume-2" class="icon-inline text-cyan"></i>
+          <span>Sound Effects</span>
+        </div>
+        <input type="checkbox" id="sfx-toggle" class="toggle" checked>
+      </div>
+
+      <div class="setting-row">
+        <div class="setting-label">
+          <i data-lucide="music" class="icon-inline text-purple"></i>
+          <span>Background Music</span>
+        </div>
+        <input type="checkbox" id="bgm-toggle" class="toggle" checked>
+      </div>
+
+      <button id="settings-close-btn" class="btn btn-secondary mt-lg" style="width:100%">
+        ปิด
+      </button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       SCREEN 1: LANDING PAGE
+       ═══════════════════════════════════════ -->
+  <div id="landing-screen" class="screen active">
+    <div class="landing-layout">
+      <!-- Left Mascot: Alien -->
+      <div class="landing-mascot landing-mascot-left" id="landing-alien-mascot">
+        <!-- Injected by JS -->
+      </div>
+
+      <!-- Center Content -->
+      <div class="landing-center">
+        <div class="arcade-cockpit-console">
+          <div class="cockpit-frame-top"></div>
+          <div class="cockpit-frame-body">
+            <div class="game-logo">
+              <div class="logo-cards">
+                <div class="logo-card black-card">0</div>
+                <div class="logo-card white-card">3</div>
+                <div class="logo-card joker-card">★</div>
+                <div class="logo-card black-card">7</div>
+                <div class="logo-card white-card">11</div>
+              </div>
+              <h1 class="game-title">Davinci Code</h1>
+              <p class="game-subtitle">Solo vs AI</p>
+              <p class="landing-tagline">ฝึกทักษะการอนุมาน — ท้าชน AI ในยานอวกาศสุดหรรษา</p>
+            </div>
+
+            <div class="menu-buttons">
+              <button id="btn-new-game" class="btn btn-primary btn-3d-yellow">
+                <i data-lucide="gamepad-2"></i> เริ่มเกมใหม่
+              </button>
+              <button id="btn-tutorial" class="btn btn-secondary btn-3d-blue">
+                <i data-lucide="book-open"></i> วิธีเล่น
+              </button>
+            </div>
+          </div>
+          <div class="cockpit-frame-bottom"></div>
+        </div>
+
+        <!-- Spaceship Telemetry Panel -->
+        <div class="telemetry-panel">
+          <div class="telemetry-item">
+            <span class="telemetry-icon">⚡</span>
+            <span class="telemetry-label">เชื้อเพลิง</span>
+            <span class="telemetry-value">100%</span>
+          </div>
+          <div class="telemetry-item">
+            <span class="telemetry-icon">📡</span>
+            <span class="telemetry-label">เรดาร์</span>
+            <span class="telemetry-value">ตรวจพบเป้าหมาย 👽</span>
+          </div>
+          <div class="telemetry-item">
+            <span class="telemetry-icon">🛡️</span>
+            <span class="telemetry-label">ระบบป้องกัน</span>
+            <span class="telemetry-value">ออนไลน์</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Mascot: Astronaut -->
+      <div class="landing-mascot landing-mascot-right" id="landing-astronaut-mascot">
+        <!-- Injected by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       SCREEN 2: GAME SETUP (Custom Game)
+       ═══════════════════════════════════════ -->
+  <div id="game-setup-screen" class="screen">
+    <div class="setup-container">
+      <h2 class="setup-title"><i data-lucide="gamepad-2" class="icon-inline"></i> ตั้งค่าเกม</h2>
+
+      <!-- AI Level -->
+      <div class="setup-section">
+        <h3 class="setup-section-title"><i data-lucide="cpu" class="icon-inline"></i> ระดับ AI</h3>
+        <div class="ai-level-options">
+          <div class="ai-option selected" data-level="easy">
+            <span class="ai-icon-wrapper"><i data-lucide="smile" class="ai-icon-lucide"></i></span>
+            <span class="ai-name">ง่าย</span>
+            <span class="ai-desc">AI เดาแบบสุ่ม</span>
+          </div>
+          <div class="ai-option" data-level="medium">
+            <span class="ai-icon-wrapper"><i data-lucide="brain" class="ai-icon-lucide"></i></span>
+            <span class="ai-name">ปานกลาง</span>
+            <span class="ai-desc">AI ใช้การตัดทิ้ง</span>
+          </div>
+          <div class="ai-option" data-level="hard">
+            <span class="ai-icon-wrapper"><i data-lucide="bot" class="ai-icon-lucide"></i></span>
+            <span class="ai-name">ยาก</span>
+            <span class="ai-desc">AI คำนวณความน่าจะเป็น</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Timer -->
+      <div class="setup-section">
+        <h3 class="setup-section-title"><i data-lucide="timer" class="icon-inline"></i> จับเวลาต่อเทิร์น</h3>
+        <div class="timer-toggle-row">
+          <div class="setting-label">
+            <span>เปิดใช้งานจับเวลา</span>
+          </div>
+          <input type="checkbox" id="timer-toggle" class="toggle">
+        </div>
+        <div class="slider-container" id="timer-slider-container">
+          <div class="slider-row">
+            <span style="font-size:0.8rem; color:var(--text-muted);">5s</span>
+            <input type="range" id="timer-slider" class="slider" min="5" max="30" value="15" step="5">
+            <span style="font-size:0.8rem; color:var(--text-muted);">30s</span>
+            <span class="slider-value" id="timer-value">15s</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card Removal -->
+      <div class="setup-section">
+        <h3 class="setup-section-title"><i data-lucide="layers" class="icon-inline"></i> สุ่มเอาการ์ดออก</h3>
+        <p style="font-size:0.78rem; color:var(--text-muted); margin-bottom:var(--space-md);">
+          ยิ่งเอาออกเยอะ ยิ่งเดายาก — ไม่รู้ว่าการ์ดไหนหายไป
+        </p>
+        <div class="card-removal-options">
+          <div class="removal-option selected" data-count="0">
+            <div class="removal-count">0</div>
+            <div class="removal-label">ปกติ</div>
+          </div>
+          <div class="removal-option" data-count="2">
+            <div class="removal-count">2</div>
+            <div class="removal-label">ใบ</div>
+          </div>
+          <div class="removal-option" data-count="4">
+            <div class="removal-count">4</div>
+            <div class="removal-label">ใบ</div>
+          </div>
+          <div class="removal-option" data-count="6">
+            <div class="removal-count">6</div>
+            <div class="removal-label">ใบ</div>
+          </div>
+        </div>
+      </div>
+
+      <button id="btn-start-game" class="btn btn-accent btn-3d-yellow setup-start-btn">
+        <i data-lucide="rocket"></i> เริ่มเกม!
+      </button>
+      <button id="btn-back-to-landing" class="btn btn-secondary btn-3d-orange mt-md" style="width:100%">
+        <i data-lucide="arrow-left"></i> กลับหน้าหลัก
+      </button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       SCREEN 3: TUTORIAL
+       ═══════════════════════════════════════ -->
+  <div id="tutorial-screen" class="screen">
+    <div class="tutorial-container">
+      <h2 class="tutorial-title"><i data-lucide="book-open" class="icon-inline"></i> วิธีเล่น Davinci Code</h2>
+
+      <!-- Step 1 -->
+      <div class="tutorial-step active" data-step="1">
+        <div class="tutorial-mascot-img" id="tutorial-mascot-1"></div>
+        <div class="tutorial-step-badge">ขั้นตอนที่ 1 / 5</div>
+        <h3 class="tutorial-step-title">ทำความรู้จักการ์ด</h3>
+        <div class="tutorial-step-content">
+          <p>ในเกมนี้มีการ์ดทั้งหมด <span class="highlight">26 ใบ</span>:</p>
+          <ul style="margin: 12px 0; padding-left: 20px;">
+            <li>การ์ด <span class="highlight">สีดำ</span> หมายเลข 0–11 (12 ใบ)</li>
+            <li>การ์ด <span class="highlight">สีขาว</span> หมายเลข 0–11 (12 ใบ)</li>
+            <li>การ์ด <span class="highlight">Joker</span> สีดำ 1 ใบ + สีขาว 1 ใบ</li>
+          </ul>
+          <p>Joker เป็นการ์ดพิเศษที่วางตำแหน่งไหนก็ได้!</p>
+        </div>
+        <div class="tutorial-cards-demo">
+          <div class="logo-card black-card" style="font-size:0.9rem">0</div>
+          <div class="logo-card black-card" style="font-size:0.9rem">5</div>
+          <div class="logo-card white-card" style="font-size:0.9rem">8</div>
+          <div class="logo-card white-card" style="font-size:0.9rem">11</div>
+          <div class="logo-card joker-card" style="font-size:0.9rem">★</div>
+        </div>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="tutorial-step" data-step="2">
+        <div class="tutorial-mascot-img" id="tutorial-mascot-2"></div>
+        <div class="tutorial-step-badge">ขั้นตอนที่ 2 / 5</div>
+        <h3 class="tutorial-step-title">กฎการเรียงไพ่</h3>
+        <div class="tutorial-step-content">
+          <p>ตอนเริ่มเกม แต่ละฝ่ายจะได้รับ <span class="highlight">4 ใบ</span></p>
+          <p style="margin-top:8px;">ไพ่ต้องเรียงจาก <span class="highlight">ซ้ายไปขวา = น้อยไปมาก</span></p>
+          <p style="margin-top:8px;">ถ้าเลขเท่ากัน <span class="highlight">สีดำอยู่ก่อนสีขาว</span></p>
+          <p style="margin-top:12px; font-size:0.8rem; color:var(--text-muted)">ตัวอย่าง: [🖤2] [🤍2] [🖤7] [🤍9] — ถูกต้อง ✅</p>
+        </div>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="tutorial-step" data-step="3">
+        <div class="tutorial-mascot-img" id="tutorial-mascot-3"></div>
+        <div class="tutorial-step-badge">ขั้นตอนที่ 3 / 5</div>
+        <h3 class="tutorial-step-title">วิธีเล่นแต่ละเทิร์น</h3>
+        <div class="tutorial-step-content">
+          <p><span class="highlight">1.</span> ดึงการ์ด 1 ใบจากกองกลาง</p>
+          <p style="margin-top:6px;"><span class="highlight">2.</span> วางในตำแหน่งที่ถูกต้อง (ระบบช่วยเรียงให้)</p>
+          <p style="margin-top:6px;"><span class="highlight">3.</span> เลือกไพ่ฝ่ายตรงข้าม แล้วทาย (ตัวเลข + สี)</p>
+          <p style="margin-top:12px;"><span class="highlight" style="color:var(--correct)">✅ ทายถูก</span> → ไพ่นั้นถูกเปิด! คุณเลือกทายต่อหรือหยุดได้</p>
+          <p style="margin-top:6px;"><span class="highlight" style="color:var(--wrong)">❌ ทายผิด</span> → ไพ่ที่คุณเพิ่งดึงจะถูกเปิด แล้วหมดเทิร์น</p>
+        </div>
+      </div>
+
+      <!-- Step 4 -->
+      <div class="tutorial-step" data-step="4">
+        <div class="tutorial-mascot-img" id="tutorial-mascot-4"></div>
+        <div class="tutorial-step-badge">ขั้นตอนที่ 4 / 5</div>
+        <h3 class="tutorial-step-title">Joker — การ์ดพิเศษ</h3>
+        <div class="tutorial-step-content">
+          <p>Joker คือการ์ดที่ <span class="highlight">ไม่มีตัวเลข</span></p>
+          <p style="margin-top:8px;">สามารถ <span class="highlight">วางตำแหน่งไหนก็ได้</span> ในแถวของคุณ</p>
+          <p style="margin-top:8px;">ถ้าจะทาย Joker ของฝ่ายตรงข้าม ให้เลือก <span class="highlight">"Joker"</span> เป็นคำตอบ</p>
+          <p style="margin-top:12px; font-size:0.8rem; color:var(--text-muted);">Joker มี 2 ใบ: Joker ดำ และ Joker ขาว</p>
+        </div>
+      </div>
+
+      <!-- Step 5 -->
+      <div class="tutorial-step" data-step="5">
+        <div class="tutorial-mascot-img" id="tutorial-mascot-5"></div>
+        <div class="tutorial-step-badge">ขั้นตอนที่ 5 / 5</div>
+        <h3 class="tutorial-step-title">เงื่อนไขชนะ</h3>
+        <div class="tutorial-step-content">
+          <p>เกมจบเมื่อฝ่ายใดฝ่ายหนึ่ง <span class="highlight">ไม่มีไพ่คว่ำเหลืออยู่เลย</span></p>
+          <p style="margin-top:8px;">ถ้าไพ่ของฝ่ายตรงข้ามถูกเปิดหมด → <span class="highlight" style="color:var(--correct)">คุณชนะ! 🎉</span></p>
+          <p style="margin-top:8px;">ถ้าไพ่ของคุณถูกเปิดหมดก่อน → <span class="highlight" style="color:var(--wrong)">AI ชนะ 💀</span></p>
+          <p style="margin-top:16px;">พร้อมแล้ว? กลับไปกดเริ่มเกมได้เลย!</p>
+        </div>
+      </div>
+
+      <!-- Progress dots -->
+      <div class="tutorial-progress" id="tutorial-progress">
+        <div class="progress-dot active" data-step="1"></div>
+        <div class="progress-dot" data-step="2"></div>
+        <div class="progress-dot" data-step="3"></div>
+        <div class="progress-dot" data-step="4"></div>
+        <div class="progress-dot" data-step="5"></div>
+      </div>
+
+      <div class="tutorial-nav">
+        <button id="btn-tutorial-prev" class="btn btn-secondary btn-3d-orange btn-sm" disabled>
+          <i data-lucide="arrow-left"></i> ก่อนหน้า
+        </button>
+        <button id="btn-tutorial-next" class="btn btn-primary btn-3d-yellow btn-sm">
+          ถัดไป <i data-lucide="arrow-right"></i>
+        </button>
+      </div>
+
+      <button id="btn-tutorial-back" class="btn btn-secondary btn-3d-orange mt-lg" style="width:100%">
+        <i data-lucide="arrow-left"></i> กลับหน้าหลัก
+      </button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       SCREEN 4: GAME BOARD (Spaceship Cockpit)
+       ═══════════════════════════════════════ -->
+  <div id="game-screen" class="screen">
+    <div class="game-board">
+
+      <!-- Cockpit Console Header -->
+      <div class="cockpit-console-header">
+        <!-- Turn Status Panel -->
+        <div class="console-card turn-status-card">
+          <div class="card-label">เทิร์นของใคร?</div>
+          <div id="turn-indicator" class="turn-indicator player-turn">คุณกำลังเล่น</div>
+          <div class="turn-counter-wrapper">
+            เทิร์นที่: <span id="game-turn-number">01</span>
+          </div>
+          <button id="btn-surrender" class="btn btn-secondary btn-3d-orange btn-sm" style="margin-top: 8px; width: 100%;">
+            <i data-lucide="flag"></i> ยอมจำนน
+          </button>
+        </div>
+
+        <!-- Center Cockpit Display Title -->
+        <div class="console-card center-title-card">
+          <div class="title-glow-text">ถอดรหัสตัวเลข</div>
+          <div class="title-sub-text">เวลาภารกิจ: <span id="total-game-timer">00:00</span></div>
+        </div>
+
+        <!-- AI Opponent Level Panel -->
+        <div class="console-card ai-opponent-card">
+          <div class="card-label">คู่ต่อสู้ AI</div>
+          <div class="ai-difficulty-display">
+            <span id="ai-difficulty-icon"><i data-lucide="smile"></i></span>
+            <span id="ai-difficulty-text">ระดับง่าย</span>
+          </div>
+          <div class="ai-stars-row" id="ai-stars-row">
+            <i data-lucide="star" class="star-icon active"></i>
+            <i data-lucide="star" class="star-icon"></i>
+            <i data-lucide="star" class="star-icon"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Timer Bar (if enabled) -->
+      <div id="timer-bar-section" class="hidden">
+        <div class="timer-bar-container">
+          <div id="timer-bar" class="timer-bar" style="width:100%"></div>
+        </div>
+        <div id="timer-text" class="timer-text"></div>
+      </div>
+
+      <!-- Main Game Sandbox Layout -->
+      <div class="game-sandbox">
+        
+        <!-- Left Side: Alien Mascot Panel -->
+        <div class="alien-mascot-panel">
+          <div class="dialog-bubble" id="alien-dialog-bubble">
+            ยินดีต้อนรับเจ้ามนุษย์! ลองทายรหัสฉันให้ถูกสิ 👽
+          </div>
+          <div class="alien-svg-wrapper" id="alien-mascot-container">
+            <!-- Dynamically injected SVG -->
+          </div>
+        </div>
+
+        <!-- Center Console Table: Interactive Board -->
+        <div class="console-game-table">
+          <!-- AI Cards Section -->
+          <div class="card-area ai-area">
+            <div class="area-label-box"><i data-lucide="bot" class="icon-inline"></i> การ์ด AI</div>
+            <div class="cards-row" id="ai-cards"></div>
+          </div>
+
+          <!-- Mid Deck and Center Controls Section -->
+          <div class="game-center">
+            <div class="deck-container-box">
+              <div id="deck-pile" class="deck-pile">
+                <i data-lucide="sparkles" class="deck-icon"></i>
+              </div>
+              <div class="deck-counter">กองกลาง: <span id="deck-count">18</span> ใบ</div>
+            </div>
+            
+            <!-- Center Controls: Turn status, Guess controls, etc. -->
+            <div class="console-center-controls" id="console-center-controls">
+              <!-- Injected by UI.js -->
+            </div>
+          </div>
+
+          <!-- Player Cards Section -->
+          <div class="card-area player-area">
+            <div class="area-label-box"><i data-lucide="user" class="icon-inline"></i> การ์ดของคุณ</div>
+            <div class="player-cards-layout">
+              <div class="cards-row" id="player-cards"></div>
+              <div class="drawn-card-area" id="player-drawn-card-area"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Side: Astronaut + Log Sidebar -->
+        <div class="right-sidebar-panel">
+          <div class="astronaut-mascot-panel">
+            <div class="astronaut-svg-wrapper" id="astronaut-mascot-container">
+              <!-- Dynamically injected Astronaut SVG -->
+            </div>
+            <div class="astronaut-badge">นักบินอวกาศ</div>
+          </div>
+          
+          <div class="spaceship-log-terminal">
+            <div class="terminal-header"><i data-lucide="terminal"></i> Terminal Logs</div>
+            <div class="game-log" id="game-log">
+              <div class="log-entry" style="color: var(--text-muted); font-style: italic;">ระบบยานอวกาศออนไลน์! ดึงการ์ดเพื่อเริ่มเล่น</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Bottom Dashboard Action Panel -->
+      <div class="action-panel" id="action-panel">
+        <div class="action-text" id="action-text">กดที่กองการ์ดเพื่อดึงการ์ด</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       SCREEN 5: RESULT SCREEN
+       ═══════════════════════════════════════ -->
+  <div id="result-screen" class="screen">
+    <div class="result-container">
+      <h2 id="result-title" class="result-title win"><i data-lucide="award" class="icon-inline"></i> คุณชนะ!</h2>
+      <div id="result-stars" class="result-stars">⭐⭐⭐☆☆</div>
+
+      <!-- Player Evaluation -->
+      <div class="eval-section">
+        <h3 class="eval-section-title"><i data-lucide="bar-chart-3" class="icon-inline text-cyan"></i> การประเมินผลการบิน</h3>
+        <div id="eval-metrics">
+          <!-- Filled by JS -->
+        </div>
+      </div>
+
+      <!-- Feedback Tips -->
+      <div class="feedback-section" id="feedback-section">
+        <h3 class="eval-section-title"><i data-lucide="lightbulb" class="icon-inline text-yellow"></i> ข้อเสนอแนะจากระบบ AI</h3>
+        <div id="feedback-list">
+          <!-- Filled by JS -->
+        </div>
+      </div>
+
+      <div class="result-actions">
+        <button id="btn-xai-replay" class="btn btn-secondary btn-3d-blue">
+          <i data-lucide="search"></i> ดูขั้นตอนการคิดของ AI
+        </button>
+        <button id="btn-play-again" class="btn btn-primary btn-3d-yellow">
+          <i data-lucide="rotate-ccw"></i> เริ่มเกมใหม่
+        </button>
+        <button id="btn-back-home" class="btn btn-secondary btn-3d-orange">
+          <i data-lucide="home"></i> กลับหน้าหลัก
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       SCREEN 6: XAI REPLAY
+       ═══════════════════════════════════════ -->
+  <div id="xai-screen" class="screen">
+    <div class="xai-container">
+      <h2 class="xai-title"><i data-lucide="search" class="icon-inline"></i> ขั้นตอนวิเคราะห์ของ AI — Game Replay</h2>
+
+      <!-- Timeline -->
+      <div class="xai-timeline" id="xai-timeline">
+        <!-- Filled by JS -->
+      </div>
+
+      <!-- Turn Detail -->
+      <div class="xai-detail" id="xai-detail">
+        <div id="xai-detail-content">
+          <p style="text-align:center; color:var(--text-muted)">เลือกเทิร์นจาก Timeline ด้านบนเพื่อดูรายละเอียด</p>
+        </div>
+      </div>
+
+      <div class="xai-nav">
+        <button id="btn-xai-prev" class="btn btn-secondary btn-3d-blue btn-sm">
+          <i data-lucide="chevron-left"></i> ก่อนหน้า
+        </button>
+        <button id="btn-xai-back" class="btn btn-secondary btn-3d-orange btn-sm">
+          <i data-lucide="arrow-left"></i> กลับผลลัพธ์
+        </button>
+        <button id="btn-xai-next" class="btn btn-secondary btn-3d-blue btn-sm">
+          ถัดไป <i data-lucide="chevron-right"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ Game Start Countdown Overlay ═══ -->
+  <div id="game-countdown-overlay" class="countdown-overlay hidden">
+    <div id="countdown-number" class="countdown-number">3</div>
+  </div>
+
+  <!-- ═══ Exit Confirmation Modal ═══ -->
+  <div id="exit-modal" class="modal-overlay">
+    <div class="modal">
+      <h2 class="modal-title"><i data-lucide="alert-triangle" class="icon-inline text-yellow"></i> ยืนยันการออกจากเกม</h2>
+      <p style="text-align: center; margin-bottom: 20px; color: var(--text-secondary);">
+        คุณต้องการยอมจำนนและกลับไปยังหน้าหลักหรือไม่? ความคืบหน้าในรอบนี้จะสูญหาย
+      </p>
+      <div style="display: flex; gap: 12px;">
+        <button id="btn-exit-confirm" class="btn btn-primary btn-3d-orange" style="flex: 1;">
+          <i data-lucide="flag"></i> ยอมจำนน
+        </button>
+        <button id="btn-exit-cancel" class="btn btn-secondary btn-3d-blue" style="flex: 1;">
+          เล่นต่อ
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ Card Draw Overlay ═══ -->
+  <div id="draw-overlay" class="draw-overlay hidden">
+    <div class="draw-overlay-content">
+      <div class="draw-overlay-title">การ์ดใบใหม่ขึ้นยาน!</div>
+      <div id="draw-overlay-card-container"></div>
+      <div class="draw-auto-dismiss-bar">
+        <div class="draw-auto-dismiss-fill" id="draw-auto-dismiss-fill"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ Mobile Bottom Sheet Guess Panel ═══ -->
+  <div id="mobile-guess-sheet" class="mobile-guess-sheet hidden">
+    <div class="mobile-guess-backdrop"></div>
+    <div class="mobile-guess-panel">
+      <div class="mobile-guess-handle"></div>
+      <div class="mobile-guess-title" id="mobile-guess-title">🎯 ทายไพ่ตำแหน่งที่ <span class="highlight">1</span></div>
+      <!-- Color Selector -->
+      <div class="mobile-guess-color-row" id="mobile-guess-color-row">
+        <button class="mobile-color-btn black selected" data-color="black">⚫ สีดำ</button>
+        <button class="mobile-color-btn white" data-color="white">⚪ สีขาว</button>
+      </div>
+      <!-- Number Grid -->
+      <div class="mobile-guess-number-grid" id="mobile-guess-number-grid">
+        <!-- 0-11 + Joker filled by JS -->
+      </div>
+      <!-- Action Buttons -->
+      <div class="mobile-guess-actions">
+        <button id="btn-mobile-guess-cancel" class="btn btn-secondary btn-3d-orange btn-sm">ยกเลิก</button>
+        <button id="btn-mobile-guess-confirm" class="btn btn-accent btn-3d-yellow btn-sm">ยืนยัน</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ Session Recovery Overlay ═══ -->
+  <div id="session-recovery-overlay" class="modal-overlay" style="display:none;">
+    <div class="modal">
+      <h2 class="modal-title"><i data-lucide="history" class="icon-inline text-cyan"></i> พบเซสชันเก่า</h2>
+      <p style="text-align: center; margin-bottom: 20px; color: var(--text-secondary);">
+        ตรวจพบเกมที่ยังเล่นค้างอยู่ ต้องการเล่นต่อจากจุดเดิมหรือไม่?
+      </p>
+      <div style="display: flex; gap: 12px;">
+        <button id="btn-session-resume" class="btn btn-primary btn-3d-yellow" style="flex: 1;">
+          <i data-lucide="play"></i> เล่นต่อ
+        </button>
+        <button id="btn-session-discard" class="btn btn-secondary btn-3d-orange" style="flex: 1;">
+          เริ่มใหม่
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ Penalty Reveal Overlay (when deck is empty & guess wrong) ═══ -->
+  <div id="penalty-reveal-overlay" class="penalty-overlay hidden">
+    <div class="penalty-content">
+      <div class="penalty-title">⚠️ ทายผิด! กองการ์ดหมดแล้ว</div>
+      <div class="penalty-sub">เลือกการ์ดลับของคุณ 1 ใบเพื่อเปิดเผยเป็นการลงโทษ</div>
+    </div>
+  </div>
+
+  <!-- ═══ Scripts ═══ -->
+  <script src="js/audio.js"></script>
+  <script src="js/globalSettings.js"></script>
+  <script src="js/gameSetup.js"></script>
+  <script src="js/gameLogger.js"></script>
+  <script src="js/ai.js"></script>
+  <script src="js/game.js"></script>
+  <script src="js/evaluator.js"></script>
+  <script src="js/xaiReplay.js"></script>
+  <script src="js/tutorial.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/main.js"></script>
+
+</body>
+</html>

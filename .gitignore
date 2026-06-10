@@ -1,0 +1,5 @@
+.gemini/
+.agents/
+Thumbs.db
+.DS_Store
+node_modules/
